@@ -41,10 +41,52 @@
                 }
             }, 1000);
             </script>
+            
+            <script>
+              $(function() {
+                $.get("/legs").success( function( data ) {
+                  var htmlString = "";
 
+                  $.each(data, function(index,  leg) {
+                    var checkedStatus = leg.done ? "checked" : "";
+                    var liElement = '<li><div class="view"><input class="toggle" type="checkbox"' + 
+                    " data-id='" + leg.id + "'" +
+                    checkedStatus +
+                    '><label>' +
+                      leg.title +
+                      '</label></div></li>';
+                    htmlString += liElement;
+                  });
+                  var ulTodos = $('.todo-list');
+                  ulTodos.html(htmlString);
+
+                  $('.toggle').change(function(e) {
+                    var itemId = $(e.target).data("id");
+                    console.log(itemId);
+
+                    var doneValue = Boolean($(e.target).is(':checked'));
+                    console.log("done:", doneValue);
+
+                    $.post("/legs/" + itemId, {
+                      _method: "PUT",
+                      task: {
+                        done: doneValue
+                      }
+                    });
+
+                  });
+                });
+              });
+            </script>
           </div>
         </div>
         <br /><br />
+
+<!--
+    <ul class="todo-list">
+
+    </ul>
+-->
 
     <div class="col-10 offset-1">
       <div class="row text-center">
@@ -61,9 +103,10 @@
               <h3>Carrie</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 1</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 13</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 25</div>
+
+                <div class="col-sm-4"><%= check_box_tag '1' %>Leg 1</div>
+                <div class="col-sm-4"><%= check_box_tag '13' %>Leg 13</div>
+                <div class="col-sm-4"><%= check_box_tag '25' %>Leg 25</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">7.1 Miles</div>
