@@ -1,3 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+<title>Save state of checkbox on refresh using JavaScript</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="css/custom.css" rel="stylesheet" />
+<style type="text/css">
+</style>
+</head>
+
+ 
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- This JavaScript file is required to load the XpressDox interview as well as the code required to run it -->
+ 
+<script>
+// Avoid scoping issues by encapsulating code inside anonymous function
+(function() {
+  // variable to store our current state
+  var cbstate;
+  
+  // bind to the onload event
+  window.addEventListener('load', function() {
+    // Get the current state from localstorage
+    // State is stored as a JSON string
+    cbstate = JSON.parse(localStorage['CBState'] || '{}');
+  
+    // Loop through state array and restore checked 
+    // state for matching elements
+    for(var i in cbstate) {
+      var el = document.querySelector('input[name="' + i + '"]');
+      if (el) el.checked = true;
+    }
+  
+    // Get all checkboxes that you want to monitor state for
+    var cb = document.getElementsByClassName('save-cb-state');
+  
+    // Loop through results and ...
+    for(var i = 0; i < cb.length; i++) {
+  
+      //bind click event handler
+      cb[i].addEventListener('click', function(evt) {
+        // If checkboxe is checked then save to state
+        if (this.checked) {
+          cbstate[this.name] = true;
+        }
+    
+    // Else remove from state
+        else if (cbstate[this.name]) {
+          delete cbstate[this.name];
+        }
+    
+    // Persist state
+        localStorage.CBState = JSON.stringify(cbstate);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>
+
+
+
+
 <body>
 
     <div class="bg"></div>
@@ -11,6 +77,10 @@
             <h1 class="text-center">Countdown to The Bourbon Chase 2018</h1>
             <h1 class="text-center" id="demo"></h1>
             <br />
+          </div>
+        </div>
+        <br />
+
             <script>
             // Set the date we're counting down to
             var countDownDate = new Date("Oct 12, 2018 10:45:00").getTime();
@@ -41,52 +111,6 @@
                 }
             }, 1000);
             </script>
-            
-            <script>
-              $(function() {
-                $.get("/legs").success( function( data ) {
-                  var htmlString = "";
-
-                  $.each(data, function(index,  leg) {
-                    var checkedStatus = leg.done ? "checked" : "";
-                    var liElement = '<li><div class="view"><input class="toggle" type="checkbox"' + 
-                    " data-id='" + leg.id + "'" +
-                    checkedStatus +
-                    '><label>' +
-                      leg.title +
-                      '</label></div></li>';
-                    htmlString += liElement;
-                  });
-                  var ulTodos = $('.todo-list');
-                  ulTodos.html(htmlString);
-
-                  $('.toggle').change(function(e) {
-                    var itemId = $(e.target).data("id");
-                    console.log(itemId);
-
-                    var doneValue = Boolean($(e.target).is(':checked'));
-                    console.log("done:", doneValue);
-
-                    $.post("/legs/" + itemId, {
-                      _method: "PUT",
-                      task: {
-                        done: doneValue
-                      }
-                    });
-
-                  });
-                });
-              });
-            </script>
-          </div>
-        </div>
-        <br /><br />
-
-<!--
-    <ul class="todo-list">
-
-    </ul>
--->
 
     <div class="col-10 offset-1">
       <div class="row text-center">
@@ -103,10 +127,9 @@
               <h3>Carrie</h3>
               <hr />
               <div class="row">
-
-                <div class="col-sm-4"><%= check_box_tag '1' %>Leg 1</div>
-                <div class="col-sm-4"><%= check_box_tag '13' %>Leg 13</div>
-                <div class="col-sm-4"><%= check_box_tag '25' %>Leg 25</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox1" value="yes"> Leg 1</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox13" value="yes"> Leg 13</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox25" value="yes"> Leg 25</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">7.1 Miles</div>
@@ -125,9 +148,9 @@
               <h3>Open</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 2</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 14</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 26</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox2" value="yes"> Leg 2</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox14" value="yes"> Leg 14</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox26" value="yes"> Leg 26</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">7.4 Miles</div>
@@ -146,9 +169,9 @@
               <h3>Tammy</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 3</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 15</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 27</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox3" value="yes"> Leg 3</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox15" value="yes"> Leg 15</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox27" value="yes"> Leg 27</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">3.6 Miles</div>
@@ -167,9 +190,9 @@
               <h3>Adam</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 4</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 16</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 28</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox4" value="yes"> Leg 4</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox16" value="yes"> Leg 16</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox28" value="yes"> Leg 28</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">5.2 Miles</div>
@@ -188,9 +211,9 @@
               <h3>Brandon</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 5</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 17</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 29</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox5" value="yes"> Leg 5</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox17" value="yes"> Leg 17</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox29" value="yes"> Leg 29</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">4.6 Miles</div>
@@ -209,9 +232,9 @@
               <h3>Ashley</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 6</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 18</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 30</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox6" value="yes"> Leg 6</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox18" value="yes"> Leg 18</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox30" value="yes"> Leg 30</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">6.2 Miles</div>
@@ -240,9 +263,9 @@
               <h3>Steph</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 7</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 19</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 31</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox7" value="yes"> Leg 7</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox19" value="yes"> Leg 19</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox31" value="yes"> Leg 31</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">4.9 Miles</div>
@@ -261,9 +284,9 @@
               <h3>Alex</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 8</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 20</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 32</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox8" value="yes"> Leg 8</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox20" value="yes"> Leg 20</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox32" value="yes"> Leg 32</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">4.8 Miles</div>
@@ -282,9 +305,9 @@
               <h3>Anna</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 9</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 21</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 33</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox9" value="yes"> Leg 9</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox21" value="yes"> Leg 21</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox33" value="yes"> Leg 33</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">8.9 Miles</div>
@@ -303,9 +326,9 @@
               <h3>Blaike</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 10</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 22</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 34</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox10" value="yes"> Leg 10</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox22" value="yes"> Leg 22</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox34" value="yes"> Leg 34</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">7.2 Miles</div>
@@ -324,9 +347,9 @@
               <h3>Kaitlyn</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 11</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 23</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 35</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox11" value="yes"> Leg 11</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox23" value="yes"> Leg 23</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox35" value="yes"> Leg 35</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">6.3 Miles</div>
@@ -345,9 +368,9 @@
               <h3>Dale</h3>
               <hr />
               <div class="row">
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 12</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 24</div>
-                <div class="col-sm-4"><input type="checkbox" value="">Leg 36</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox12" value="yes"> Leg 12</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox24" value="yes"> Leg 24</div>
+                <div class="col-sm-4"><input type="checkbox" class="save-cb-state" name="mycheckbox36" value="yes"> Leg 36</div>
               </div>
               <div class="row">
                 <div class="col-sm-4">5.8 Miles</div>
@@ -369,3 +392,4 @@
     </div>
 
 </body>
+
