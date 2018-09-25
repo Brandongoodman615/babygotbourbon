@@ -1,6 +1,6 @@
 class LegsController < ApplicationController
   def index
-    render json: Leg.all
+    @leg = Leg.first
   end
 
   def update
